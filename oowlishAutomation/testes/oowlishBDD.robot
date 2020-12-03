@@ -1,7 +1,7 @@
 *** Settings ***
 Resource            ../resources/resources.robot
 Test Setup          Open
-#Test Teardown       Close browser
+Test Teardown       Close
 
 
 *** Test Case ***
@@ -9,19 +9,19 @@ Test Setup          Open
 ######## ACCOUNTS ########
 Scenario 01: Invalid login
   Given I am at the login screen
-  When insert an email and a password
+  When insert an 'email' and a 'password'
   And I click on login
   Then receive notification 'There is no user record corresponding to this identifier. The user may have been deleted.'
 
 Scenario 02: Invalid password
   Given I am at the login screen
-  When insert a valid email and a password
+  When insert an 'gabriel' and a 'password'
   And I click on login
   Then receive notification 'The password is invalid or the user does not have a password.'
 
 Scenario 03: Login success
   Given I am at the login screen
-  When insert a valid email and a valid password
+  When insert an 'gabriel' and a '123456'
   And I click on login
   Then you will be logged in
 
@@ -68,7 +68,7 @@ Scenario 09: Password different than Password verification
 
 Scenario 10: Many logins failed
   Given I am at the login screen
-  When insert a valid email and a password
+  When insert an 'teste' and a 'password'
   And I try to login many times
   Then receive notification 'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.'
 
@@ -98,11 +98,11 @@ Scenario 13: Registering events lunch in
   Then I will see the lunch in time
 
 Scenario 14: Registering events exit
-    Give that I am logged in
-    When I click on Add in/out
-    And select activity Exit
-    And click on submit
-    Then I will see the exit time
+  Give that I am logged in
+  When I click on Add in/out
+  And select activity Exit
+  And click on submit
+  Then I will see the exit time
 
 Scenario 15: Registering exit first
   Given I am at the register screen
@@ -127,3 +127,18 @@ Scenario 18: Update event 'arrival' after all registered events
   When record all events
   And record events Arrival again
   Then I will see the actual worked hours
+
+Scenario 19: Display the balance of hours worked
+  Given I am at the login screen
+  When logging in a balanced user 'gabriel@gmail.com' and '123456'
+  And I click on login
+  Then I will see the actual worked hours
+
+
+
+
+Scenario 20: Supertracker button does not direct home
+  Given I am at the login screen
+  When I click on register
+  And I click on the navbar SuperTracker button
+  Then I am still on the registration screen

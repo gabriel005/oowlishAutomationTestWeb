@@ -13,11 +13,11 @@ Open
   Open Browser     about:blank   ${BROWSER}
 
 
-#Close browser
-#  Close Browser
+Close
+  Close Browser
 
 
-### Ações
+####################### GIVEN #######################
 Given I am at the login screen
   Go To   ${URL}
   wait until Element is Visible   css=#root > div.app.d-flex.flex-column > main > div > form > h1
@@ -25,7 +25,7 @@ Given I am at the login screen
 
 Give that I am logged in
   Given I am at the login screen
-  When insert a valid email and a valid password
+  When insert an 'gabriel' and a '123456'
   And I click on login
   wait until Element is Visible     xpath=//*[@id="root"]/div[1]/main/div[1]/div/div/button
   Title Should Be                   Timesheet | SuperTracker
@@ -37,6 +37,8 @@ Given I am at the register screen
 
 
 
+
+####################### WHEN #######################
 When insert a an email
   wait until Element is Visible     xpath=//*[@id="root"]/div[1]/main/div/form
   Element Text Should Be            xpath=//*[@class="h3 mb-3 text-center font-weight-normal"]    Create your account
@@ -45,17 +47,9 @@ When insert a an email
   Input Text                        xpath=//*[@id="authEmail"]                    ${EMAIL}@oolish.com
   Input Text                        xpath=//*[@id="authConfirmEmail"]             ${EMAIL}@oolish.com
 
-When insert an email and a password
-  insert an email
-  insert a password
-
-When insert a valid email and a password
-  insert a valid email
-  insert a password
-
-When insert a valid email and a valid password
-  insert a valid email
-  insert a valid password
+When insert an '${EMAIL}' and a '${PASSWORD}'
+  insert an '${EMAIL}'
+  insert a '${PASSWORD}'
 
 When I click on register
   Click Element    xpath=//*[@id="responsive-navbar-nav"]/div/a[2]
@@ -97,18 +91,28 @@ When record all events
 When I insert a email different than email confirmation
   wait until Element is Visible     xpath=//*[@id="root"]/div[1]/main/div/form
   Element Text Should Be            xpath=//*[@class="h3 mb-3 text-center font-weight-normal"]    Create your account
-  insert an email
+  insert an 'email'
   insert confirmation email
 
 When I insert a password different than password confirmation
   wait until Element is Visible     xpath=//*[@id="root"]/div[1]/main/div/form
   Element Text Should Be            xpath=//*[@class="h3 mb-3 text-center font-weight-normal"]    Create your account
-  insert a password
+  insert a 'password'
   insert a confirmation password
 
+When logging in a balanced user '${EMAIL}' and '${PASSWORD}'
+  Set Test Variable                 ${EMAIL}
+  Input text                        xpath=//*[@id="authEmail"]              ${EMAIL}
+  Set Test Variable                 ${PASSWORD}
+  Input text                        xpath=//*[@id="authPassword"]           ${PASSWORD}
 
 
 
+
+
+
+
+####################### AND #######################
 And I click on login
   Click Button    xpath=//*[@id="root"]/div[1]/main/div/form/button
 
@@ -189,21 +193,37 @@ Login many times
   Click Button                      xpath=//*[@id="root"]/div[1]/main/div/form/button
   Sleep                     3s
 
+And I click on the navbar SuperTracker button
+  Click Element                      xpath=//*[@id="root"]/div[1]/nav/a
 
-insert an email
-  ${EMAIL}                          Generate Random String
+
+
+
+
+
+
+####################### INSERTS #######################
+insert an '${EMAIL}'
+  Run Keyword If                    '${EMAIL}' == 'email'                   Generate email
+  Run Keyword If                    '${EMAIL}' != 'email'                   inserting email '${EMAIL}'
+
+inserting email '${EMAIL}'
   Set Test Variable                 ${EMAIL}
   Input text                        xpath=//*[@id="authEmail"]              ${EMAIL}@oowlish.com
+
+insert a '${PASSWORD}'
+  Run Keyword If                    '${PASSWORD}' == 'password'             Generate password
+  Run Keyword If                    '${PASSWORD}' != 'password'             inserting password '${PASSWORD}'
+
+inserting password '${PASSWORD}'
+  Set Test Variable                 ${PASSWORD}
+  Input text                        xpath=//*[@id="authPassword"]           ${PASSWORD}
+
 
 insert confirmation email
   ${EMAIL}                          Generate Random String
   Set Test Variable                 ${EMAIL}
   Input Text                        xpath=//*[@id="authConfirmEmail"]       ${EMAIL}@oowlish.com
-
-insert a password
-  ${PASSWORD}                       Generate Random String
-  Set Test Variable                 ${PASSWORD}
-  Input text                        xpath=//*[@id="authPassword"]           ${PASSWORD}
 
 insert a confirmation password
   ${PASSWORD}                       Generate Random String
@@ -214,7 +234,6 @@ insert a valid email
   Set Test Variable                 ${EMAIL}                        gabriel@oowlish.com
   Input text                        xpath=//*[@id="authEmail"]      ${EMAIL}
 
-
 insert a valid password
   Set Test Variable                 ${PASSWORD}                     123456
   Input text                        xpath=//*[@id="authPassword"]   ${PASSWORD}
@@ -222,9 +241,22 @@ insert a valid password
 
 
 
+####################### GENERATE #######################
+Generate email
+  ${EMAIL}                          Generate Random String
+  Set Test Variable                 ${EMAIL}
+  Input text                        xpath=//*[@id="authEmail"]              ${EMAIL}@oowlish.com
 
 
-### Conferências
+Generate password
+  ${PASSWORD}                       Generate Random String
+  Set Test Variable                 ${PASSWORD}
+  Input text                        xpath=//*[@id="authPassword"]           ${PASSWORD}
+
+
+
+
+####################### CONFERENCES #######################
 
 Then receive notification '${MSG}'
   wait until Element is Visible     xpath=//*[@class="Toastify__toast-body"]
@@ -248,4 +280,11 @@ Then I will see the exit time
   wait until Element is Visible   xpath=//*[@id="root"]/div[1]/main/div[1]/div/table/tbody/tr[4]/td[3]
 
 Then I will see the actual worked hours
-  wait until Element is Visible   xpath=//*[@id="root"]/div[1]/main/div[2]/div/div/div[1]
+  wait until Element is Visible                     xpath=//*[@id="root"]/div[1]/main/div[2]/div/div/div[1]
+  Element Text Should Be                            xpath=//*[@id="root"]/div[1]/main/div[2]/div/div/div[1]/span        Actual worked hours:
+  ${ACTUAL}                   Get Text              xpath=//*[@id="root"]/div[1]/main/div[2]/div/div/div[1]
+  ${EXPECTED}                 Get Text              xpath=//*[@id="root"]/div[1]/main/div[2]/div/div/div[2]
+  Log To Console                                    ${ACTUAL}, ${EXPECTED}
+
+Then I am still on the registration screen
+  Element Text Should Be            xpath=//*[@class="h3 mb-3 text-center font-weight-normal"]    Create your account
